@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:html' as html;
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
@@ -204,17 +205,26 @@ class RecordPluginWeb extends RecordPlatform {
     }
   }
 
-  void _onStop(html.Event event) {
+  Future<void> _onStop(html.Event event) async {
     String? audioUrl;
 
     if (_chunks.isNotEmpty) {
       final blob = html.Blob(_chunks);
+      final html.FileReader reader = html.FileReader();
+      reader.onLoad.listen((e) {
+        _handleData(reader);
+      });
+      reader.readAsArrayBuffer(blob);
       audioUrl = html.Url.createObjectUrl(blob);
     }
 
     _resetMediaRecorder();
 
     _onStopCompleter?.complete(audioUrl);
+  }
+
+  void _handleData(html.FileReader reader) {
+    print(reader.result);
   }
 
   void _resetMediaRecorder() {
