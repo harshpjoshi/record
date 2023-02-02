@@ -215,6 +215,7 @@ class RecordPluginWeb extends RecordPlatform {
         _handleData(reader);
       });
       reader.readAsArrayBuffer(blob);
+
       //added
       audioUrl = html.Url.createObjectUrl(blob);
     }
